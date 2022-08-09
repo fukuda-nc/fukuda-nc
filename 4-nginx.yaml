@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-4
+  namespace: pipecd
+  annotations:
+      service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+  labels:
+    app: nginx-4
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx-4
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: nginx-4
+  loadBalancerSourceRanges:
+  - 10.210.10.151/32
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-4
+  namespace: pipecd
+spec:
+  selector:
+    matchLabels:
+      app: nginx-4
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-4
+    spec:
+      containers:
+      - name: nginx-4
+        image: nginx:1.20
+        ports:
+        - containerPort: 80
+          name: nginx-4
